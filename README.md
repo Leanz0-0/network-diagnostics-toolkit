@@ -2,7 +2,7 @@
 
 A beginner-friendly, test-driven Python command-line troubleshooting tool for distinguishing **DNS resolution**, **TCP connectivity**, and **HTTP application responses**. Built as a practical IT infrastructure and networking portfolio project.
 
-> **Status:** Local prototype with evidence-based diagnostic guidance. GitHub Actions and publication polish will follow. Not intended for production monitoring or network scanning.
+> **Status:** Tested educational prototype with rule-based diagnostic guidance, local integration tests, and GitHub Actions on Windows and Ubuntu. Not intended for production monitoring or network scanning.
 
 ## Features
 
@@ -13,7 +13,7 @@ A beginner-friendly, test-driven Python command-line troubleshooting tool for di
 - Continue independent checks when another layer fails (useful for fault isolation).
 - Record timestamps, results, status codes, errors, and latency to local **JSON Lines** (`.jsonl`) files.
 - Validate host, port, timeout, and URL before making requests. Refuse URLs containing credentials or query strings.
-- Test behavior with Python's `unittest` and a locally bound, temporary HTTP test server.
+- Test behavior with Python's `unittest` and a locally bound, temporary HTTP test server (including 201/204, redirects, 4xx and 5xx responses).
 - Generate a rule-based diagnosis, suggested next investigation, and evidence in the terminal and JSONL report.
 
 ## Quick start (Windows PowerShell)
@@ -78,6 +78,10 @@ The tool also handles `--only` runs, and reports `mixed_results` when independen
 
 Unlike the Infrastructure Health Monitor, this troubleshooting CLI intentionally uses exit code **1** when a diagnostic check fails.
 
+## Architecture and automated verification
+
+See [`docs/architecture.md`](docs/architecture.md) for components, boundaries, and design tradeoffs. GitHub Actions runs the test suite using Python 3.14 on **Windows and Ubuntu** for pushes to `main` and pull requests. Network integration tests use only a local loopback server, so CI does not depend on public websites.
+
 ## Project structure
 
 ```text
@@ -94,7 +98,10 @@ network-diagnostics-toolkit/
 ├── tests/               # Unit tests + loopback integration tests
 ├── docs/
 │   ├── troubleshooting.md
-│   └── diagnosis-guide.md
+│   ├── diagnosis-guide.md
+│   └── architecture.md
+├── .github/workflows/python-tests.yml
+├── .gitattributes
 └── .gitignore
 ```
 
@@ -115,4 +122,4 @@ network-diagnostics-toolkit/
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-All local integration tests use loopback (`127.0.0.1`) only. GitHub Actions will be added in a later batch.
+All integration tests use loopback (`127.0.0.1`) only. Tests cover positive, negative, and conflicting-layer observations. GitHub Actions runs the same suite on Windows and Ubuntu; a green workflow confirms the CI run, not every possible production network environment.

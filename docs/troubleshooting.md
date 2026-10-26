@@ -23,8 +23,16 @@ A TCP check performs its own name resolution when passed a hostname, so results 
 
 Implement a tested `--quiet` flag that suppresses per-check terminal messages but **still writes the JSONL report and preserves exit codes**. Update README and add at least two tests. Don't modify historical reports or publish them to Git.
 
-## Future batches
+## Verification and release
 
-- Evidence-based diagnostic summaries based on combinations of observations (implemented in Batch 2).
-- Extra simulated failure modes, latency statistics, and richer machine-readable reports.
-- Cross-platform GitHub Actions tests and publication polish.
+- Run `python -m unittest discover -s tests -v` before each commit.
+- Check the GitHub Actions Windows and Ubuntu jobs after a push.
+- Use a fresh clone and rerun the tests to verify reproducibility.
+- Confirm reports, virtual environments, and local machine details are not tracked.
+- Review `docs/architecture.md` for implementation boundaries and operational limitations.
+
+## Potential next improvements
+
+- Optional `--quiet` mode (independent engineering challenge above).
+- Timing statistics across repeat runs and opt-in service history comparison.
+- Explicit TLS certificate diagnostics; carefully designed no-secrets report filtering.
