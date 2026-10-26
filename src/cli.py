@@ -6,6 +6,7 @@ import re
 import sys
 from urllib.parse import urlsplit
 
+from diagnosis import diagnose
 from dns_check import resolve_host
 from http_check import check_http
 from reporting import append_report
@@ -88,12 +89,14 @@ def main(argv: list[str] | None = None) -> int:
         results.append(check_http(url, args.timeout))
 
     healthy = all(result.success for result in results)
+    diagnosis = diagnose(results)
     report = {
         "timestamp_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "host": args.host,
         "port": args.port,
         "url": url,
         "overall_success": healthy,
+        "diagnosis": diagnosis,
         "results": [result.to_dict() for result in results],
     }
 
@@ -105,6 +108,9 @@ def main(argv: list[str] | None = None) -> int:
             print(f"       {result.details}")
         if result.error:
             print(f"       {result.error}")
+
+    print(f"DIAGNOSIS [{diagnosis['code']}]: {diagnosis['summary']}")
+    print(f"NEXT STEP: {diagnosis['next_step']}")
 
     try:
         destination = append_report(report, args.output)

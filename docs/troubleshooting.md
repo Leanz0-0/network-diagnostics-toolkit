@@ -25,6 +25,6 @@ Implement a tested `--quiet` flag that suppresses per-check terminal messages bu
 
 ## Future batches
 
-- Actionable root-cause summaries based on combinations of observations.
+- Evidence-based diagnostic summaries based on combinations of observations (implemented in Batch 2).
 - Extra simulated failure modes, latency statistics, and richer machine-readable reports.
 - Cross-platform GitHub Actions tests and publication polish.

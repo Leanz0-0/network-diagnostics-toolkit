@@ -2,7 +2,7 @@
 
 A beginner-friendly, test-driven Python command-line troubleshooting tool for distinguishing **DNS resolution**, **TCP connectivity**, and **HTTP application responses**. Built as a practical IT infrastructure and networking portfolio project.
 
-> **Status:** Batch 1 working prototype. Further diagnostic analysis, failure labs, and CI will follow. Not intended for production monitoring or network scanning.
+> **Status:** Local prototype with evidence-based diagnostic guidance. GitHub Actions and publication polish will follow. Not intended for production monitoring or network scanning.
 
 ## Features
 
@@ -14,6 +14,7 @@ A beginner-friendly, test-driven Python command-line troubleshooting tool for di
 - Record timestamps, results, status codes, errors, and latency to local **JSON Lines** (`.jsonl`) files.
 - Validate host, port, timeout, and URL before making requests. Refuse URLs containing credentials or query strings.
 - Test behavior with Python's `unittest` and a locally bound, temporary HTTP test server.
+- Generate a rule-based diagnosis, suggested next investigation, and evidence in the terminal and JSONL report.
 
 ## Quick start (Windows PowerShell)
 
@@ -60,6 +61,12 @@ Stop the test server in window A with `Ctrl+C` when done.
 
 Note: An HTTP 404 from `/health` still proves that the HTTP server answered; the HTTP check correctly reports a non-2xx **application-level failure**.
 
+## Interpreting diagnostic guidance
+
+Each run records a `diagnosis` object containing `code`, `layer`, `summary`, `next_step`, and `evidence`. The classification describes **observations**, not a guaranteed root cause. For instance, `tcp_connection_refused` means the connection was refused; a stopped listener is one possibility, but access controls can also reject it.
+
+The tool also handles `--only` runs, and reports `mixed_results` when independent checks disagree. See [`docs/diagnosis-guide.md`](docs/diagnosis-guide.md) for classifications and test scenarios.
+
 ## Exit codes
 
 | Code | Meaning |
@@ -78,6 +85,7 @@ network-diagnostics-toolkit/
 ├── src/
 │   ├── main.py          # CLI entry point
 │   ├── cli.py           # Validation, orchestration, output
+│   ├── diagnosis.py     # Evidence-based fault classification
 │   ├── models.py        # Consistent check results
 │   ├── dns_check.py     # OS resolver check
 │   ├── tcp_check.py     # Single-port TCP connection
@@ -85,7 +93,8 @@ network-diagnostics-toolkit/
 │   └── reporting.py     # Append-only JSONL records
 ├── tests/               # Unit tests + loopback integration tests
 ├── docs/
-│   └── troubleshooting.md
+│   ├── troubleshooting.md
+│   └── diagnosis-guide.md
 └── .gitignore
 ```
 
